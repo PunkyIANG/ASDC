@@ -122,18 +122,18 @@ public:
     }
 };
 
-void Adauga(NodArbore *&nod, const GraphicsCard &gpu)
+void Adauga(NodArbore *&nod, GraphicsCard gpu)
 {
-    cout << "Checking  if (!nod) " << nod << "\n";
+    // cout << "Checking  if (!nod) " << nod << "\n";
     if (!nod)
     {
-        cout << "Adding " << gpu;
+        // cout << "Adding " << gpu;
         nod = new NodArbore(gpu);
-        cout << "Added " << gpu;
+        // cout << "Added " << gpu;
     }
     else
     {
-        cout << "Wut D:\n";
+        // cout << "Wut D:\n";
         if (gpu.id < nod->gpu.id)
         {
             Adauga(nod->smaller, gpu);
@@ -159,13 +159,13 @@ GraphicsCard SearchABC(NodArbore *nod, int key, int count = 0)
 
     if (key < nod->gpu.id)
     {
-        cout << "Parcurgem " << nod->gpu;
+        // cout << "Parcurgem " << nod->gpu;
         return SearchABC(nod->smaller, key, ++count);
     }
 
     if (key > nod->gpu.id)
     {
-        cout << "Parcurgem " << nod->gpu;
+        // cout << "Parcurgem " << nod->gpu;
         return SearchABC(nod->bigger, key, ++count);
     }
 
@@ -313,7 +313,7 @@ int main()
     NodArbore *nod;
     for (int i = 0; i < 50; i++)
     {
-        cout << "Adding gpu " << i << "\n";
+        // cout << "Adding gpu " << i << "\n";
         Adauga(nod, database[i]);
     }
     cout << SearchABC(nod, 50);
