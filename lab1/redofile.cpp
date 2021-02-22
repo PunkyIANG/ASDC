@@ -2,8 +2,8 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-#define delimiter '\t'
-#define PATH "..\\db_neord3.txt"
+#define delimiter ','
+#define PATH "..\\db_ord.txt"
 
 using namespace std;
 
@@ -37,17 +37,10 @@ public:
         string out[5];
         tokenize(line, delimiter, out);
 
-        // for (int i = 0; i < 5; i++)
-        // {
-        //     out[i].erase(remove(out[i].begin(), out[i].end(), '\t'), out[i].end());
-        // }
-
-        // cout << out[0] + " ";
-        // cout << out[1] + " ";
-        // cout << out[2] + " ";
-        // cout << out[3] + " ";
-        // cout << out[4] + " ";
-        // cout << '\n';
+        for (int i = 0; i < 5; i++)
+        {
+            out[i].erase(remove(out[i].begin(), out[i].end(), '\t'), out[i].end());
+        }
 
         id = stoi(out[0]);
         manufacturer = out[1];
@@ -80,25 +73,27 @@ public:
 
 ostream &operator<<(ostream &os, const GraphicsCard &card)
 {
-    os << card.id << " " << card.manufacturer << " " << card.model << " "
-       << card.boostClock << " " << card.ram << '\n';
+    os << card.id << '\t' << card.manufacturer << '\t' << card.model << '\t'
+       << card.boostClock << '\t' << card.ram << '\n';
     return os;
 }
 
 GraphicsCard SearchOrd(GraphicsCard database[50], int key)
 {
-    int count = 0;
     for (int i = 0; i < 50; i++)
     {
-        count++;
         if (database[i].id == key)
         {
-            cout << "Found GPU on key " << key << " in " << count << " comparisons \n";
             return database[i];
+        }
+        if (database[i].id > key)
+        {
+            cout << "No GPU found on key " << key << "\n";
+            return GraphicsCard();
         }
     }
 
-    cout << "No GPU found on key " << key << " in " << count << " comparisons \n";
+    cout << "No GPU found on key " << key << "\n";
     return GraphicsCard();
 }
 
@@ -122,18 +117,14 @@ public:
     }
 };
 
-void Adauga(NodArbore *&nod, const GraphicsCard &gpu)
+void Adauga(NodArbore *&nod, GraphicsCard gpu)
 {
-    cout << "Checking  if (!nod) " << nod << "\n";
     if (!nod)
     {
-        cout << "Adding " << gpu;
         nod = new NodArbore(gpu);
-        cout << "Added " << gpu;
     }
     else
     {
-        cout << "Wut D:\n";
         if (gpu.id < nod->gpu.id)
         {
             Adauga(nod->smaller, gpu);
@@ -149,27 +140,27 @@ void Adauga(NodArbore *&nod, const GraphicsCard &gpu)
     }
 }
 
-GraphicsCard SearchABC(NodArbore *nod, int key, int count = 0)
+GraphicsCard SearchABC(NodArbore *nod, int key)
 {
     if (!nod)
     {
-        cout << "Informatia nu exista in arbore, " << ++count << " comparari \n";
+        cout << "Informatia nu exista in arbore\n";
         return GraphicsCard();
     }
 
     if (key < nod->gpu.id)
     {
         cout << "Parcurgem " << nod->gpu;
-        return SearchABC(nod->smaller, key, ++count);
+        return SearchABC(nod->smaller, key);
     }
 
     if (key > nod->gpu.id)
     {
         cout << "Parcurgem " << nod->gpu;
-        return SearchABC(nod->bigger, key, ++count);
+        return SearchABC(nod->bigger, key);
     }
 
-    cout << "Informatia exista in arbore, gasit in " << count << " comparari \n";
+    cout << "Informatia exista in arbore\n";
     return nod->gpu;
 }
 
@@ -177,7 +168,6 @@ GraphicsCard SearchBinar(GraphicsCard database[50], int key)
 {
     int a = 0;
     int b = 49;
-    int count = 0;
     GraphicsCard result = GraphicsCard();
 
     while (a < b)
@@ -185,9 +175,6 @@ GraphicsCard SearchBinar(GraphicsCard database[50], int key)
         int i = (a + b) / 2;
         result = database[i];
 
-        //TODO: check about comparisons and counter increment
-
-        count++;
         if (result.id < key)
         {
             a = i + 1;
@@ -203,17 +190,7 @@ GraphicsCard SearchBinar(GraphicsCard database[50], int key)
         }
     }
 
-    count++;
-    if (key == result.id)
-    {
-        cout << "Informatie gasita in " << count << " comparari\n";
-        return result;
-    }
-    else
-    {
-        cout << "Informatie nu este gasita in " << count << " comparari\n";
-        return GraphicsCard();
-    }
+    return key == result.id ? result : GraphicsCard();
 }
 
 int Fibonacci(int n)
@@ -240,16 +217,14 @@ GraphicsCard SearchFibonacci(GraphicsCard database[50], int key)
     int i = Fibonacci(m - 1);
     int p = Fibonacci(m - 2);
     int q = Fibonacci(m - 3);
-    int count = 0;
 
     while (database[i].id != key)
     {
-        count++;
         if (key < database[i].id)
         {
             if (q == 0)
             {
-                cout << "Failed to find key " << key << " in " << count << " steps \n";
+                cout << "Failed to find key " << key << "\n";
                 return GraphicsCard();
             }
 
@@ -263,7 +238,7 @@ GraphicsCard SearchFibonacci(GraphicsCard database[50], int key)
         {
             if (p == 1)
             {
-                cout << "Failed to find key " << key << " in " << count << " steps \n";
+                cout << "Failed to find key " << key << "\n";
                 return GraphicsCard();
             }
 
@@ -273,7 +248,6 @@ GraphicsCard SearchFibonacci(GraphicsCard database[50], int key)
         }
     }
 
-    cout << "Found key " << key << " in " << count << " steps \n";
     return database[i];
 }
 
@@ -290,7 +264,6 @@ int main()
 
         while (getline(file, line))
         {
-            // cout << line << "\n";
             database[i] = GraphicsCard(line);
             i++;
         }
@@ -305,25 +278,50 @@ int main()
         cout << database[i];
     }
 
+    file.close();
+
+    ifstream seriesFile;
+    ofstream resultFile;
+
+    seriesFile.open("..\\db_ord2");
+    resultFile.open("..\\db_neord3.txt");
+
+    if (seriesFile.is_open() && resultFile.is_open())
+    {
+        for (int i = 0; i < 50; i++)
+        {
+            getline(seriesFile, line);
+            line.erase(remove(line.begin(), line.end(), ' '), line.end());
+
+            database[i].id = stoi(line);
+
+            resultFile << database[i];
+        }
+    }
+
+    seriesFile.close();
+    resultFile.flush();
+    resultFile.close();
+
+
+
     // 1)
     // cout << "\n"
     //      << SearchOrd(database, 51);
 
     // 2)
-    NodArbore *nod;
-    for (int i = 0; i < 50; i++)
-    {
-        cout << "Adding gpu " << i << "\n";
-        Adauga(nod, database[i]);
-    }
-    cout << SearchABC(nod, 50);
-    delete nod;
+    // NodArbore *nod;
+    // for (int i = 0; i < 50; i++)
+    // {
+    //     Adauga(nod, database[i]);
+    // }
+    // cout << SearchABC(nod, 36);
+    // delete nod;
 
     // 3)
     // cout << "\n"
     //      << SearchBinar(database, 50);
 
-    // 4)
-    // cout << "\n"
-    //      << SearchFibonacci(database, 34);
+    cout << "\n"
+         << SearchFibonacci(database, 34);
 }
