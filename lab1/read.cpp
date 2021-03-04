@@ -3,7 +3,7 @@
 #include <sstream>
 #include <algorithm>
 #define delimiter '\t'
-#define PATH "..\\db_neord3.txt"
+#define PATH "..\\db_ord3.txt"
 
 using namespace std;
 
@@ -24,7 +24,6 @@ void tokenize(const string &str, const char delim, string out[5])
 
 class GraphicsCard
 {
-private:
 public:
     int id;
     string manufacturer;
@@ -58,7 +57,7 @@ public:
 
     GraphicsCard()
     {
-        id = 0;
+        id = -1;
         manufacturer = "---";
         model = "---";
         boostClock = 0;
@@ -310,20 +309,20 @@ int main()
     //      << SearchOrd(database, 51);
 
     // 2)
-    NodArbore *nod;
-    for (int i = 0; i < 50; i++)
-    {
-        // cout << "Adding gpu " << i << "\n";
-        Adauga(nod, database[i]);
-    }
-    cout << SearchABC(nod, 50);
-    delete nod;
+    // NodArbore *nod;
+    // for (int i = 0; i < 50; i++)
+    // {
+    //     // cout << "Adding gpu " << i << "\n";
+    //     Adauga(nod, database[i]);
+    // }
+    // cout << SearchABC(nod, 50);
+    // delete nod;
 
     // 3)
-    // cout << "\n"
-    //      << SearchBinar(database, 50);
+    cout << "\n"
+         << SearchBinar(database, 34);
 
     // 4)
-    // cout << "\n"
-    //      << SearchFibonacci(database, 34);
+    cout << "\n"
+         << SearchFibonacci(database, 34);
 }
