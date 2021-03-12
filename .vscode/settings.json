@@ -1,5 +1,6 @@
 {
     "files.associations": {
+        "*.pl": "plaintext",
         "iosfwd": "cpp",
         "iostream": "cpp",
         "algorithm": "cpp",
@@ -42,6 +43,7 @@
         "sstream": "cpp",
         "stdexcept": "cpp",
         "streambuf": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "chrono": "cpp"
     }
 }

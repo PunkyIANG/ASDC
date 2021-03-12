@@ -2,10 +2,14 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <time.h>
+#include <chrono>
 #define delimiter '\t'
 #define PATH "..\\db_ord3.txt"
 
 using namespace std;
+using namespace std::chrono;
+
 
 void tokenize(const string &str, const char delim, string out[5])
 {
@@ -84,7 +88,7 @@ ostream &operator<<(ostream &os, const GraphicsCard &card)
     return os;
 }
 
-GraphicsCard SearchOrd(GraphicsCard database[50], int key)
+int SearchOrd(GraphicsCard database[50], int key)
 {
     int count = 0;
     for (int i = 0; i < 50; i++)
@@ -92,13 +96,13 @@ GraphicsCard SearchOrd(GraphicsCard database[50], int key)
         count++;
         if (database[i].id == key)
         {
-            cout << "Found GPU on key " << key << " in " << count << " comparisons \n";
-            return database[i];
+            // cout << "Found GPU on key " << key << " in " << count << " comparisons \n";
+            return count;
         }
     }
 
-    cout << "No GPU found on key " << key << " in " << count << " comparisons \n";
-    return GraphicsCard();
+    // cout << "No GPU found on key " << key << " in " << count << " comparisons \n";
+    return count;
 }
 
 class NodArbore
@@ -148,13 +152,13 @@ void Adauga(NodArbore *&nod, GraphicsCard gpu)
     }
 }
 
-GraphicsCard SearchABC(NodArbore *nod, int key, int count = 0)
+int SearchABC(NodArbore *nod, int key, int count = 0)
 {
     count++;
     if (!nod)
     {
-        cout << "Informatia nu exista in arbore, " << count << " comparari \n";
-        return GraphicsCard();
+        // cout << "Informatia nu exista in arbore, " << count << " comparari \n";
+        return count;
     }
 
     if (key < nod->gpu.id)
@@ -169,11 +173,11 @@ GraphicsCard SearchABC(NodArbore *nod, int key, int count = 0)
         return SearchABC(nod->bigger, key, count);
     }
 
-    cout << "Informatia exista in arbore, gasit in " << count << " comparari \n";
-    return nod->gpu;
+    // cout << "Informatia exista in arbore, gasit in " << count << " comparari \n";
+    return count;
 }
 
-GraphicsCard SearchBinar(GraphicsCard database[50], int key)
+int SearchBinar(GraphicsCard database[50], int key)
 {
     int a = 0;
     int b = 49;
@@ -203,16 +207,15 @@ GraphicsCard SearchBinar(GraphicsCard database[50], int key)
         }
     }
 
-    count++;
     if (key == result.id)
     {
-        cout << "Informatie gasita in " << count << " comparari\n";
-        return result;
+        // cout << "Informatie gasita in " << count << " comparari\n";
+        return count;
     }
     else
     {
-        cout << "Informatie nu este gasita in " << count << " comparari\n";
-        return GraphicsCard();
+        // cout << "Informatie nu este gasita in " << count << " comparari\n";
+        return count;
     }
 }
 
@@ -232,7 +235,7 @@ int Fibonacci(int n)
     }
 }
 
-GraphicsCard SearchFibonacci(GraphicsCard database[50], int key)
+int SearchFibonacci(GraphicsCard database[50], int key)
 {
     int m = 10;
     int Fm = Fibonacci(m); //closest fibonacci number bigger than database.length
@@ -249,8 +252,8 @@ GraphicsCard SearchFibonacci(GraphicsCard database[50], int key)
         {
             if (q == 0)
             {
-                cout << "Failed to find key " << key << " in " << count << " steps \n";
-                return GraphicsCard();
+                // cout << "Failed to find key " << key << " in " << count << " steps \n";
+                return count;
             }
 
             i -= q;
@@ -263,8 +266,8 @@ GraphicsCard SearchFibonacci(GraphicsCard database[50], int key)
         {
             if (p == 1)
             {
-                cout << "Failed to find key " << key << " in " << count << " steps \n";
-                return GraphicsCard();
+                // cout << "Failed to find key " << key << " in " << count << " steps \n";
+                return count;
             }
 
             i += q;
@@ -273,8 +276,8 @@ GraphicsCard SearchFibonacci(GraphicsCard database[50], int key)
         }
     }
 
-    cout << "Found key " << key << " in " << count << " steps \n";
-    return database[i];
+    // cout << "Found key " << key << " in " << count << " steps \n";
+    return count;
 }
 
 int main()
@@ -305,29 +308,56 @@ int main()
         cout << database[i];
     }
 
-    // 1)
+    // // 1)
+    // int ordCount = 0;
 
-    for (int i = 1; i <= 100; i++)
-    {
-        cout << "\n"
-             << SearchOrd(database, i);
-    }
+    // for (int i = 1; i <= 100; i++)
+    // {
+    //     ordCount += SearchOrd(database, i);
+    // }
 
-    // 2)
+    // cout << ordCount << " steps for ordCount\n";
+
+    // // 2)
     // NodArbore *nod;
     // for (int i = 0; i < 50; i++)
     // {
     //     // cout << "Adding gpu " << i << "\n";
     //     Adauga(nod, database[i]);
     // }
-    // cout << SearchABC(nod, 50);
+
+    // int abcCount = 0;
+
+
+    // for (int i = 1; i <= 100; i++)
+    // {
+    //     abcCount += SearchABC(nod, i);
+    // }
+
+    // cout << abcCount << " steps for abcCount\n";
+
     // delete nod;
 
     // 3)
-    // cout << "\n"
-    //      << SearchBinar(database, 34);
+
+    int searchBinar = 0;
+
+    for (int i = 1; i <= 100; i++)
+    {
+        searchBinar += SearchBinar(database, i);
+    }
+
+    cout << searchBinar << " steps for searchBinar\n";
 
     // 4)
-    // cout << "\n"
-    //      << SearchFibonacci(database, 34);
+
+    int searchFibonacci = 0;
+
+    for (int i = 1; i <= 100; i++)
+    {
+        searchFibonacci += SearchFibonacci(database, i);
+    }
+
+    cout << searchFibonacci << " steps for searchFibonacci\n";
+
 }
