@@ -75,6 +75,10 @@ public:
         ram = copy.ram;
     }
 
+    // ~GraphicsCard() {
+    //     cout << id << " ";
+    // }
+
     // friend istream &operator>>(istream &is, GraphicsCard &card);
     friend ostream &operator<<(ostream &os, const GraphicsCard &card);
 };
@@ -95,20 +99,33 @@ ostream &operator<<(ostream &os, const GraphicsCard &card)
     return os;
 }
 
-void BubbleSort(GraphicsCard *database)
+int BubbleSort(GraphicsCard *database)
 {
+    int count = 0;
     for (int i = 0; i < 49; i++)
     {
         for (int j = i; j < 50; j++)
         {
             if (database[i].id > database[j].id)
             {
+                count++;
                 GraphicsCard swap = database[j];
                 database[j] = database[i];
                 database[i] = swap;
             }
         }
     }
+
+    return count;
+}
+
+void PrintIds(GraphicsCard *database)
+{
+    for (int i = 0; i < 50; i++)
+    {
+        cout << database[i].id << ' ';
+    }
+    cout << '\n';
 }
 
 void InsertValue(GraphicsCard *database, int objPos)
@@ -128,16 +145,21 @@ void InsertValue(GraphicsCard *database, int objPos)
     database[i + 1] = temp;
 }
 
-void InsertionSort(GraphicsCard *database)
+int InsertionSort(GraphicsCard *database)
 {
+    int count = 0;
     for (int i = 1; i < 50; i++)
     {
         InsertValue(database, i);
     }
+
+    return count;
 }
 
 void SelectionSort(GraphicsCard *database)
 {
+    int count = 0;
+
     for (int i = 0; i < 49; i++)
     {
         int smallest = i;
@@ -153,15 +175,6 @@ void SelectionSort(GraphicsCard *database)
         database[smallest] = database[i];
         database[i] = swap;
     }
-}
-
-void PrintIds(GraphicsCard *database)
-{
-    for (int i = 0; i < 50; i++)
-    {
-        cout << database[i].id << ' ';
-    }
-    cout << '\n';
 }
 
 void Partition(GraphicsCard *database, int start, int end, int &pivot)
@@ -254,15 +267,18 @@ int main()
     //     cout << i << " " << bubbleSorted[i];
     // }
 
-    // GraphicsCard insertionSorted[50];
-    // copy(begin(database), end(database), begin(insertionSorted));
+    GraphicsCard insertionSorted[50];
+    //copy(begin(database), end(database), begin(insertionSorted));
 
-    // InsertionSort(insertionSorted);
+    copy(database, database + 50, insertionSorted);
 
-    // for (int i = 0; i < 50; i++)
-    // {
-    //     cout << i << " " << insertionSorted[i];
-    // }
+
+    //InsertionSort(insertionSorted);
+
+    for (int i = 0; i < 50; i++)
+    {
+        cout << i << " " << insertionSorted[i];
+    }
 
     // GraphicsCard selectionSorted[50];
     // copy(begin(database), end(database), begin(selectionSorted));
