@@ -119,7 +119,7 @@ void InsertValue(GraphicsCard *database, int objPos)
 
     for (i = objPos - 1; i >= 0; i--)
     {
-        if (database[objPos].id > database[i].id)
+        if (temp.id > database[i].id)
             break;
         else
             database[i + 1] = database[i];
@@ -254,15 +254,15 @@ int main()
     //     cout << i << " " << bubbleSorted[i];
     // }
 
-    // GraphicsCard insertionSorted[50];
-    // copy(begin(database), end(database), begin(insertionSorted));
+    GraphicsCard insertionSorted[50];
+    copy(begin(database), end(database), begin(insertionSorted));
 
-    // InsertionSort(insertionSorted);
+    InsertionSort(insertionSorted);
 
-    // for (int i = 0; i < 50; i++)
-    // {
-    //     cout << i << " " << insertionSorted[i];
-    // }
+    for (int i = 0; i < 50; i++)
+    {
+        cout << i << " " << insertionSorted[i];
+    }
 
     // GraphicsCard selectionSorted[50];
     // copy(begin(database), end(database), begin(selectionSorted));

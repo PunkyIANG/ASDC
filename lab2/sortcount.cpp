@@ -99,13 +99,15 @@ ostream &operator<<(ostream &os, const GraphicsCard &card)
     return os;
 }
 
-int BubbleSort(GraphicsCard *database)
+int BubbleSort(GraphicsCard *database, int &compCount)
 {
     int count = 0;
+
     for (int i = 0; i < 49; i++)
     {
         for (int j = i; j < 50; j++)
         {
+            compCount++;
             if (database[i].id > database[j].id)
             {
                 count++;
@@ -128,7 +130,7 @@ void PrintIds(GraphicsCard *database)
     cout << '\n';
 }
 
-void InsertValue(GraphicsCard *database, int objPos)
+int InsertValue(GraphicsCard *database, int objPos, int &compCount)
 {
     GraphicsCard temp = database[objPos];
 
@@ -136,57 +138,70 @@ void InsertValue(GraphicsCard *database, int objPos)
 
     for (i = objPos - 1; i >= 0; i--)
     {
-        if (database[objPos].id > database[i].id)
+        compCount++;
+        if (temp.id > database[i].id)
             break;
         else
             database[i + 1] = database[i];
     }
 
     database[i + 1] = temp;
+
+    if (i + 1 != objPos)
+        return 1;
+
+    return 0;
 }
 
-int InsertionSort(GraphicsCard *database)
+int InsertionSort(GraphicsCard *database, int &compCount)
 {
     int count = 0;
+    compCount = 0;
     for (int i = 1; i < 50; i++)
     {
-        InsertValue(database, i);
+        count += InsertValue(database, i, compCount);
     }
 
     return count;
 }
 
-void SelectionSort(GraphicsCard *database)
+int SelectionSort(GraphicsCard *database, int &compCount)
 {
     int count = 0;
+    compCount = 0;
 
     for (int i = 0; i < 49; i++)
     {
         int smallest = i;
         for (int j = i; j < 50; j++)
         {
+            compCount++;
             if (database[smallest].id > database[j].id)
             {
                 smallest = j;
             }
         }
 
+        count++;
         GraphicsCard swap = database[smallest];
         database[smallest] = database[i];
         database[i] = swap;
     }
+
+    return count;
 }
 
-void Partition(GraphicsCard *database, int start, int end, int &pivot)
+int Partition(GraphicsCard *database, int start, int end, int &pivot, int &compCount)
 {
     int i;
+    int count = 0;
     // PrintIds(database);
 
     for (i = pivot - 1; i >= start; i--)
     {
+        compCount++;
         if (database[pivot].id < database[i].id)
         {
-
             GraphicsCard temp = database[i];
 
             for (int j = i; j <= end - 1; j++)
@@ -195,36 +210,48 @@ void Partition(GraphicsCard *database, int start, int end, int &pivot)
             }
 
             database[end] = temp;
+            count++;
             pivot--;
             // PrintIds(database);
         }
     }
+
+    return count;
 }
 
-void QuickSortRecursive(GraphicsCard *database, int start, int end)
+int QuickSortRecursive(GraphicsCard *database, int start, int end, int &compCount)
 {
-    if (!(start < end)) {
-        return;
+    if (!(start < end))
+    {
+        return 0;
     }
 
+    int count = 0;
+
     int pivot = end;
-    Partition(database, start, end, pivot);
+    count += Partition(database, start, end, pivot, compCount);
     //PrintIds(database);
 
-    QuickSortRecursive(database, start, pivot - 1);
-    QuickSortRecursive(database, pivot + 1, end);
+    count += QuickSortRecursive(database, start, pivot - 1, compCount);
+    count += QuickSortRecursive(database, pivot + 1, end, compCount);
+
+    return count;
 }
 
-void QuickSort(GraphicsCard *database)
+int QuickSort(GraphicsCard *database, int &compCount)
 {
+    compCount = 0;
     int pivot = 49;
+    int count = 0;
     //PrintIds(database);
-    Partition(database, 0, 49, pivot);
+    count += Partition(database, 0, 49, pivot, compCount);
     //PrintIds(database);
 
-    QuickSortRecursive(database, 0, pivot - 1);
-    QuickSortRecursive(database, pivot + 1, 49);
+    count += QuickSortRecursive(database, 0, pivot - 1, compCount);
+    count += QuickSortRecursive(database, pivot + 1, 49, compCount);
     //PrintIds(database);
+
+    return count;
 }
 
 int main()
@@ -257,10 +284,14 @@ int main()
 
     cout << "\n";
 
-    // GraphicsCard bubbleSorted[50];
-    // copy(begin(database), end(database), begin(bubbleSorted));
+    GraphicsCard bubbleSorted[50];
+    copy(begin(database), end(database), begin(bubbleSorted));
 
-    // BubbleSort(bubbleSorted);
+    int bubbleCompCount = 0;
+    int bubbleSortCount = BubbleSort(bubbleSorted, bubbleCompCount);
+
+    cout << "Bubble sort in " << bubbleSortCount << " permutari si " << bubbleCompCount << " comparari\n";
+
 
     // for (int i = 0; i < 50; i++)
     // {
@@ -268,32 +299,39 @@ int main()
     // }
 
     GraphicsCard insertionSorted[50];
-    //copy(begin(database), end(database), begin(insertionSorted));
+    copy(begin(database), end(database), begin(insertionSorted));
 
-    copy(database, database + 50, insertionSorted);
+    int insertionCompCount = 0;
+    int insertionSortCount = InsertionSort(insertionSorted, insertionCompCount);
 
+    cout << "Insertion sort in " << insertionSortCount << " permutari si " << insertionCompCount << " comparari\n";
 
-    //InsertionSort(insertionSorted);
+    // for (int i = 0; i < 50; i++)
+    // {
+    //     cout << i << " " << insertionSorted[i];
+    // }
 
-    for (int i = 0; i < 50; i++)
-    {
-        cout << i << " " << insertionSorted[i];
-    }
+    GraphicsCard selectionSorted[50];
+    copy(begin(database), end(database), begin(selectionSorted));
 
-    // GraphicsCard selectionSorted[50];
-    // copy(begin(database), end(database), begin(selectionSorted));
+    int selectionCompCount = 0;
+    int selectionSortCount = SelectionSort(selectionSorted, selectionCompCount);
 
-    // SelectionSort(selectionSorted);
+    cout << "Selection sort in " << selectionSortCount << " permutari si " << selectionCompCount << " comparari\n";
+
 
     // for (int i = 0; i < 50; i++)
     // {
     //     cout << i << " " << selectionSorted[i];
     // }
 
-    // GraphicsCard quickSorted[50];
-    // copy(begin(database), end(database), begin(quickSorted));
+    GraphicsCard quickSorted[50];
+    copy(begin(database), end(database), begin(quickSorted));
 
-    // QuickSort(quickSorted);
+    int quickCompCount = 0;
+    int quickSortCount =  QuickSort(quickSorted, quickCompCount);
+
+    cout << "Quick sort in " << quickSortCount << " permutari si " << quickCompCount << " comparari\n";
 
     // for (int i = 0; i < 50; i++)
     // {
